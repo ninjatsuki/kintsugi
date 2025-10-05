@@ -1,44 +1,39 @@
-from sympy import *
+# interpolation.py
+"""
+Lagrange Interpolation using SymPy
 
-Abs = [1, 2, 3, 4]  
-Ord = [1, 2, 4, 8]
-C1 = 0
-C2 = 0
-C3 = 0
-C4 = 0
+This program computes the Lagrange interpolation polynomial
+for a set of given points (x, y) using symbolic computation.
+"""
 
-LC = [C1, C2, C3, C4]
+from sympy import symbols, expand
 
-for i in range(0, len(Abs)):
-    points = {Abs[i]: Ord[i]}
-    print(points)
+# Input points
+x_values = [1, 2, 3, 4]
+y_values = [1, 2, 4, 8]
 
-def intrpl():
-    global C1, C2, C3, C4  
-    n = 0  
+# Placeholder for Lagrange basis polynomials
+basis_polys = []
+
+def lagrange_interpolation():
     x = symbols('x')
-    coeffs = []
     
-    for idx, C in enumerate(LC):
-        C = 1
-        x0 = Abs[n]
-        n += 1
-        
-        for i in range(0, len(Abs)):
-            if Abs[i] != x0:
-                C = C * (x - Abs[i]) / (x0 - Abs[i])
-        
-        print(expand(C))
-        coeffs.append(C)
+    for i, x_i in enumerate(x_values):
+        L_i = 1
+        for j, x_j in enumerate(x_values):
+            if i != j:
+                L_i *= (x - x_j) / (x_i - x_j)
+        L_i = expand(L_i)
+        basis_polys.append(L_i)
+        print(f"L_{i}(x) = {L_i}")
     
+    # Construct final interpolation polynomial
+    polynomial = sum(y * L for y, L in zip(y_values, basis_polys))
+    polynomial = expand(polynomial)
     
-    C1, C2, C3, C4 = coeffs
-    
-    
-    fun = Ord[0]*C1 + Ord[1]*C2 + Ord[2]*C3 + Ord[3]*C4
-    print("\nFinal function:")
-    print(expand(fun))
-    
-    return True
+    print("\nFinal interpolation polynomial:")
+    print(polynomial)
+    return polynomial
 
-intrpl()
+if __name__ == "__main__":
+    lagrange_interpolation()
